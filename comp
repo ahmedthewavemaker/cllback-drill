@@ -1,0 +1,134 @@
+*******************************************************************APP, LIST, and CARD,js all together**********************************************************************
+
+
+*************APP.JS****************************************************************************************************************************************************
+
+import React, { Component } from 'react';
+import List from './List';
+import './App.css';
+
+const newRandomCard = () => {
+  const id = Math.random().toString(36).substring(2, 4)
+      + Math.random().toString(36).substring(2, 4);
+  return {
+      id,
+      title: `Random Card ${id}`,
+      content: 'lorem ipsum',
+  }
+}
+
+function omit(obj, keyToOmit) {
+  let { [keyToOmit]: _, ...rest } = obj;
+  return rest;
+}
+
+// Example
+const objectWithKVPs = {
+  key: 'value',
+  foo: 'foo value',
+  bar: 'bar value',
+  abc: { nested: 'object' }
+}
+
+// To remove the foo key value pair
+const newObjectWithKVPs = omit(objectWithKVPs, 'foo');
+
+function handleAddKard(){
+  console.log('card added')
+}
+
+function handleRemoveKard(){
+  console.log('card removed')
+}
+
+function App(props) {
+
+
+  const { store } = props
+  
+
+  return (
+    <main className="App">
+      <header className="App-header">
+        <h1>Trelloyes!</h1>
+      </header>
+      <div className="App-list">
+        {store.lists.map((item, i) => (
+          <List
+            key={i}
+            header={item.header}
+            cards={item.cardIds.map(id => store.allCards[id])} 
+            onAddItem= {props.handleAddKard()}
+            onRemoveItem={props.handleRemoveKard()} />
+                        
+        ))}
+
+      </div>
+    </main>
+  )
+}
+
+App.defaultProps = {
+  store: {
+    lists: [],
+    allCards: {},
+  }
+};
+
+export default App;
+
+
+*********************LIST**********************************************************************************************************************************************
+
+import React from 'react';
+import Card from './Card';
+import './List.css';
+
+
+function List(props) {
+    return (
+        <section className="List">
+            <header className="List-header">
+
+                <h2>{props.header}</h2>
+            </header>
+            <div className="List-cards">
+                {props.cards.map((card) =>
+                    <Card
+                        key={card.id}
+                        title={card.title}
+                        content={card.content}
+                        date={card.date}
+                        onAddItem={props.onAddItem} 
+                        onRemoveItem={props.onRemoveItem}
+                    />)}
+                <button type="button"  onClick={props.onAddItem} className="List-add-button">
+                    + Add Random Card
+            </button>
+            </div>
+        </section>
+
+    )
+}
+
+export default List;
+
+
+***************CARD*************************************************************************************************************************************************
+
+import React from 'react';
+import './Card.css';
+
+function Card(props){
+    return (
+        <div className="Card">
+            <button type="button" onClick={props.onRemoveItem}>delete</button>
+            <h3>{props.title}</h3>
+            <p>{props.content}</p>
+            <p>{props.date}</p>
+          </div>
+    )
+} 
+
+export default Card;
+
